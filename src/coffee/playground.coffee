@@ -24,6 +24,7 @@
     self.rotation = rotate
     self.points = points
     self.opacity = 0
+    self.scale = 0
     self.vx = Math.random() * 2 - 1
     self.vy = Math.random() * 2 - 1
     self.life = 0
@@ -35,10 +36,12 @@
 
     if this.opacity < 1 && this.life < 50
       this.opacity += 0.02
+      this.scale += 0.02
     this.life++
 
 
-
+    if maxLife - this.life < 50
+      this.scale -= 0.02
     # If life is less than a hundred away from dying then speed up.
     if maxLife - this.life < 100
       this.vy *= 1.075
@@ -51,6 +54,7 @@
 
     if this.life >= maxLife
       this.life = 0
+      this.scale = 0
       this.x = Math.floor((Math.random() * canvas.width) + 1)
       this.y = Math.floor((Math.random() * canvas.height) + 1)
       this.vx = Math.random() - 0.5
@@ -74,6 +78,7 @@
     starContext.translate (star.size / 2), (star.size / 2)
     starContext.rotate star.rotation * Math.PI / 180
     starContext.translate -(star.size / 2), -(star.size / 2)
+    starContext.scale star.scale, star.scale
     starContext.beginPath()
     i = 0
     while i <= (star.points * 2)
