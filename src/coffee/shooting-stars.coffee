@@ -1,17 +1,4 @@
 ###
-  Simple debounce utility for viewport resizing.
-###
-debounce = (func, delay) ->
-  inDebounce = undefined
-  ->
-    context = this
-    args = arguments
-    clearTimeout inDebounce
-    inDebounce = setTimeout((->
-      func.apply context, args
-    ), delay)
-
-###
   Creates a star to be used on our canvas.
 ###
 
@@ -42,15 +29,15 @@ Star::update = ->
   particlePool = this.ss.particlePool
   particles = this.ss.particles
 
-  if this.opacity < 1 && this.life < 50
-    this.opacity += 0.02
-    this.scale += 0.02
+  if this.opacity < 1 && this.life < (maxLife / 6)
+    this.opacity += (100 / (maxLife / 6)) / 100
+    this.scale += (100 / (maxLife / 6)) / 100
   this.life++
 
-  if maxLife - this.life < 50
-    this.scale -= 0.02
+  if maxLife - this.life < (maxLife / 6)
+    this.scale -= (100 / (maxLife / 6)) / 100
   # If life is less than a hundred away from dying then speed up.
-  if maxLife - this.life < 100
+  if maxLife - this.life < (maxLife / 3)
     this.vy *= 1.075
     this.vx *= 1.075
     this.opacity = (maxLife - this.life) / 100
@@ -105,44 +92,58 @@ Star::render = (context) ->
 
 
 
+extend = (a, b) ->
+  for key of b
+    if b.hasOwnProperty(key) and b[key] isnt undefined
+      a[key] = b[key]
+  a
 
 
 
 
 
 
-ShootingStars = (canvasId) ->
+window.ShootingStars = ShootingStars = (config) ->
+  canvasId = config.id
+  defaults = {
+    particleLife: 300,
+    amount: 5,
+    star: {
+      size: {
+        upper: 50,
+        lower: 25
+      },
+      rotateLimit: 45,
+      points: 5,
+      innerRadius: 0.5,
+      borderColor: '#000',
+      fillColor: 'red',
+    }
+  };
+  this.options = extend defaults, config
   this.canvas = canvas = document.getElementById canvasId
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
   canvas.ctx = canvas.getContext '2d'
-  this.particleSize = 20
-  this.maxLife = 300 # This means a particles is alive for 300 frames
+  this.maxLife = this.options.particleLife # This means a particles is alive for 300 frames
   this.particles = []
-  this.particleIndex = 0
   this.particlePool = []
   this
-
-
-# canvas = document.getElementById 'app'
-# canvas.width = window.innerWidth
-# canvas.height = window.innerHeight
-# canvas.ctx = ctx = canvas.getContext '2d'
-# particleSize = 20
-# maxLife = 300 # This means a particles is alive for 300 frames
-# particles = []
-# particleIndex = 0
-# particlePool = []
-
 
 
 ShootingStars::flushPool = ->
   that = this
   canvas = that.canvas
   particlePool = that.particlePool = []
+  particles = that.particles = []
+  poolSize = that.options.amount
   i = 0
-  while i < 10
-    particlePool.push new Star 50, 45, 5, 25, 15, 'black', 'yellow', Math.floor((Math.random() * canvas.width) + 1), Math.floor((Math.random() * canvas.height) + 1), that
+  while i < poolSize
+    getRandomFromRange = (max, min) ->
+      Math.floor(Math.random() * (max - min + 1) + min)
+    size = getRandomFromRange that.options.star.size.upper, that.options.star.size.lower
+    rotation = getRandomFromRange that.options.star.rotateLimit, 0
+    particlePool.push new Star size, rotation, 5, size / 2, (size / 2) * that.options.star.innerRadius, this.options.star.borderColor, this.options.star.fillColor, Math.floor((Math.random() * canvas.width) + 1), Math.floor((Math.random() * canvas.height) + 1), that
     i++
 
 ShootingStars::render = ->
@@ -153,7 +154,7 @@ ShootingStars::render = ->
   particles = that.particles
   ctx.save()
   ctx.clearRect 0, 0, canvas.width, canvas.height
-  if Math.random() > 0.95 and particles.length < 10 and particlePool.length > 0
+  if Math.random() > 0.95 and particles.length < that.options.amount and particlePool.length > 0
     particles.push particlePool.shift()
   p = 0
   while p < particles.length
@@ -171,13 +172,3 @@ ShootingStars::render = ->
   # console.log new Date().toUTCString()
   requestAnimationFrame ->
     that.render()
-
-# window.addEventListener 'resize', debounce (->
-#   canvas.width = window.innerWidth
-#   canvas.height = window.innerHeight
-#   flushPool()
-# ), 500
-
-myCanvas = new ShootingStars 'app'
-myCanvas.flushPool()
-myCanvas.render()

@@ -1,13 +1,51 @@
 doctype
 head
-	meta(charset="utf-8")
-	meta(http-equiv="X-UA-Compatible", content="IE=edge")
-	title whitesite
-	meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1.0")
-	meta(name="description", content="whitesite playground")
-	link(rel="stylesheet", href="css/style.css")
+  meta(charset="utf-8")
+  meta(http-equiv="X-UA-Compatible", content="IE=edge")
+  title shooting stars
+  meta(name="viewport", content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1.0")
+  meta(name="description", content="shooting stars")
+  link(rel="stylesheet", href="css/style.css")
 body
-	include header
-	block content
-	include footer
-	script(src="js/playground.js")
+  block content
+  script(src="js/playground.js")
+  script.
+    var debounce = function(func, delay) {
+      var inDebounce;
+      inDebounce = undefined;
+      return function() {
+        var args, context;
+        context = this;
+        args = arguments;
+        clearTimeout(inDebounce);
+        return inDebounce = setTimeout((function() {
+          return func.apply(context, args);
+        }), delay);
+      };
+    };
+    
+    var config = {
+      id: 'app',
+      particleLife: 300,
+      amount: 5,
+      star: {
+        size: {
+          upper: 50,
+          lower: 25
+        },
+        rotateLimit: 90, 
+        points: 5,
+        innerRadius: 0.5,
+        borderColor: '#000',
+        fillColor: 'red',
+      }
+    };
+    
+    myCanvas = new ShootingStars(config);
+    myCanvas.flushPool();
+    myCanvas.render();
+    window.addEventListener('resize', debounce(function() {
+      myCanvas.canvas.width = window.innerWidth;
+      myCanvas.canvas.height = window.innerHeight;
+      myCanvas.flushPool();
+    }, 500));
