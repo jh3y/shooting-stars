@@ -9,19 +9,6 @@ I wanted to create something simple instead of using CSS animations on DOM eleme
 This isn't a released piece of code but if you're interested in playing with it you can by importing the `shooting-stars.js` file into your page and then adding something like the following code to your javascript.
 
 ```javascript
-  var debounce = function(func, delay) {
-    var inDebounce;
-    inDebounce = undefined;
-    return function() {
-      var args, context;
-      context = this;
-      args = arguments;
-      clearTimeout(inDebounce);
-      return inDebounce = setTimeout((function() {
-        return func.apply(context, args);
-      }), delay);
-    };
-  };
 
   var config = {
     id: 'app',
@@ -43,11 +30,6 @@ This isn't a released piece of code but if you're interested in playing with it 
   myCanvas = new ShootingStars(config);
   myCanvas.flushPool();
   myCanvas.render();
-  window.addEventListener('resize', debounce(function() {
-    myCanvas.canvas.width = window.innerWidth;
-    myCanvas.canvas.height = window.innerHeight;
-    myCanvas.flushPool();
-  }, 500));
 
 ```
 This relies on there being a canvas element in your DOM with the ID `app`. You can of course change this as long as that canvas element exists.

@@ -4,7 +4,7 @@
  */
 
 (function() {
-  var ShootingStars, Star, extend;
+  var ShootingStars, Star, debounce, extend;
 
   Star = function(size, rotate, points, outerRadius, innerRadius, borderColor, fillColor, x, y, starCanvas) {
     var self;
@@ -93,6 +93,23 @@
     return context.drawImage(starCanvas, star.x, star.y);
   };
 
+  debounce = function(func, delay) {
+    var inDebounce;
+    inDebounce = void 0;
+    inDebounce = void 0;
+    return function() {
+      var args, context;
+      args = void 0;
+      context = void 0;
+      context = this;
+      args = arguments;
+      clearTimeout(inDebounce);
+      return inDebounce = setTimeout((function() {
+        return func.apply(context, args);
+      }), delay);
+    };
+  };
+
   extend = function(a, b) {
     var key;
     for (key in b) {
@@ -104,7 +121,8 @@
   };
 
   window.ShootingStars = ShootingStars = function(config) {
-    var canvas, canvasId, defaults;
+    var canvas, canvasId, defaults, self;
+    self = this;
     canvasId = config.id;
     defaults = {
       particleLife: 300,
@@ -121,15 +139,20 @@
         fillColor: 'red'
       }
     };
-    this.options = extend(defaults, config);
-    this.canvas = canvas = document.getElementById(canvasId);
+    self.options = extend(defaults, config);
+    self.canvas = canvas = document.getElementById(canvasId);
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     canvas.ctx = canvas.getContext('2d');
-    this.maxLife = this.options.particleLife;
-    this.particles = [];
-    this.particlePool = [];
-    return this;
+    self.maxLife = self.options.particleLife;
+    self.particles = [];
+    self.particlePool = [];
+    window.addEventListener('resize', debounce((function() {
+      self.canvas.width = window.innerWidth;
+      self.canvas.height = window.innerHeight;
+      self.flushPool();
+    }), 500));
+    return self;
   };
 
   ShootingStars.prototype.flushPool = function() {

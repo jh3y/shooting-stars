@@ -88,7 +88,18 @@ Star::render = (context) ->
 
 
 
-
+debounce = (func, delay) ->
+  inDebounce = undefined
+  inDebounce = undefined
+  ->
+    args = undefined
+    context = undefined
+    context = this
+    args = arguments
+    clearTimeout inDebounce
+    inDebounce = setTimeout((->
+      func.apply context, args
+    ), delay)
 
 
 
@@ -104,6 +115,7 @@ extend = (a, b) ->
 
 
 window.ShootingStars = ShootingStars = (config) ->
+  self = this
   canvasId = config.id
   defaults = {
     particleLife: 300,
@@ -120,15 +132,21 @@ window.ShootingStars = ShootingStars = (config) ->
       fillColor: 'red',
     }
   };
-  this.options = extend defaults, config
-  this.canvas = canvas = document.getElementById canvasId
+  self.options = extend defaults, config
+  self.canvas = canvas = document.getElementById canvasId
   canvas.width = window.innerWidth
   canvas.height = window.innerHeight
   canvas.ctx = canvas.getContext '2d'
-  this.maxLife = this.options.particleLife # This means a particles is alive for 300 frames
-  this.particles = []
-  this.particlePool = []
-  this
+  self.maxLife = self.options.particleLife # This means a particles is alive for 300 frames
+  self.particles = []
+  self.particlePool = []
+  window.addEventListener 'resize', debounce((->
+    self.canvas.width = window.innerWidth
+    self.canvas.height = window.innerHeight
+    self.flushPool()
+    return
+  ), 500)
+  self
 
 
 ShootingStars::flushPool = ->
