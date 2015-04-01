@@ -16,20 +16,6 @@
     </footer>
   <script src="js/shooting-stars.min.js"></script>
   <script>
-    var debounce = function(func, delay) {
-      var inDebounce;
-      inDebounce = undefined;
-      return function() {
-        var args, context;
-        context = this;
-        args = arguments;
-        clearTimeout(inDebounce);
-        return inDebounce = setTimeout((function() {
-          return func.apply(context, args);
-        }), delay);
-      };
-    };
-    
     var config = {
       id: 'app',
       particleLife: 300,
@@ -46,14 +32,8 @@
         fillColor: '#ffcc00',
       }
     };
-    
     myCanvas = new ShootingStars(config);
     myCanvas.flushPool();
     myCanvas.render();
-    window.addEventListener('resize', debounce(function() {
-      myCanvas.canvas.width = window.innerWidth;
-      myCanvas.canvas.height = window.innerHeight;
-      myCanvas.flushPool();
-    }, 500));
   </script>
 </body>
