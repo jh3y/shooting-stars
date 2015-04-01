@@ -4,7 +4,7 @@
  */
 
 (function() {
-  var ShootingStars, Star, canvas, ctx, debounce, flushPool, maxLife, particleIndex, particlePool, particleSize, particles, render;
+  var ShootingStars, Star, debounce, myCanvas;
 
   debounce = function(func, delay) {
     var inDebounce;
@@ -25,7 +25,7 @@
     Creates a star to be used on our canvas.
    */
 
-  Star = function(size, rotate, points, outerRadius, innerRadius, borderColor, fillColor, x, y) {
+  Star = function(size, rotate, points, outerRadius, innerRadius, borderColor, fillColor, x, y, starCanvas) {
     var self;
     self = this;
     self.x = x;
@@ -42,12 +42,18 @@
     self.vx = Math.random() * 2 - 1;
     self.vy = Math.random() * 2 - 1;
     self.life = 0;
+    self.ss = starCanvas;
     return self;
   };
 
   Star.prototype.update = function() {
+    var canvas, maxLife, particlePool, particles;
     this.x += this.vx;
     this.y += this.vy;
+    canvas = this.ss.canvas;
+    maxLife = this.ss.maxLife;
+    particlePool = this.ss.particlePool;
+    particles = this.ss.particles;
     if (this.opacity < 1 && this.life < 50) {
       this.opacity += 0.02;
       this.scale += 0.02;
@@ -107,51 +113,40 @@
   };
 
   ShootingStars = function(canvasId) {
-    var canvas, ctx, maxLife, particleIndex, particlePool, particleSize, particles;
-    canvas = document.getElementById('app');
+    var canvas;
+    this.canvas = canvas = document.getElementById(canvasId);
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    canvas.ctx = ctx = canvas.getContext('2d');
-    particleSize = 20;
-    maxLife = 300;
-    particles = [];
-    particleIndex = 0;
-    particlePool = [];
+    canvas.ctx = canvas.getContext('2d');
+    this.particleSize = 20;
+    this.maxLife = 300;
+    this.particles = [];
+    this.particleIndex = 0;
+    this.particlePool = [];
     return this;
   };
 
-  canvas = document.getElementById('app');
-
-  canvas.width = window.innerWidth;
-
-  canvas.height = window.innerHeight;
-
-  canvas.ctx = ctx = canvas.getContext('2d');
-
-  particleSize = 20;
-
-  maxLife = 300;
-
-  particles = [];
-
-  particleIndex = 0;
-
-  particlePool = [];
-
-  flushPool = function() {
-    var i, results;
-    particlePool = [];
+  ShootingStars.prototype.flushPool = function() {
+    var canvas, i, particlePool, results, that;
+    that = this;
+    canvas = that.canvas;
+    particlePool = that.particlePool = [];
     i = 0;
     results = [];
     while (i < 10) {
-      particlePool.push(new Star(50, 45, 5, 25, 15, 'black', 'yellow', Math.floor((Math.random() * canvas.width) + 1), Math.floor((Math.random() * canvas.height) + 1)));
+      particlePool.push(new Star(50, 45, 5, 25, 15, 'black', 'yellow', Math.floor((Math.random() * canvas.width) + 1), Math.floor((Math.random() * canvas.height) + 1), that));
       results.push(i++);
     }
     return results;
   };
 
-  render = function() {
-    var p;
+  ShootingStars.prototype.render = function() {
+    var canvas, ctx, p, particlePool, particles, that;
+    that = this;
+    canvas = that.canvas;
+    ctx = canvas.ctx;
+    particlePool = that.particlePool;
+    particles = that.particles;
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (Math.random() > 0.95 && particles.length < 10 && particlePool.length > 0) {
@@ -173,17 +168,15 @@
       to 60 FPS.
      */
     ctx.restore();
-    return requestAnimationFrame(render);
+    return requestAnimationFrame(function() {
+      return that.render();
+    });
   };
 
-  window.addEventListener('resize', debounce((function() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    return flushPool();
-  }), 500));
+  myCanvas = new ShootingStars('app');
 
-  flushPool();
+  myCanvas.flushPool();
 
-  render();
+  myCanvas.render();
 
 }).call(this);
