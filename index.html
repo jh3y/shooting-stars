@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>shooting stars</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, maximum-scale=1.0">
+  <meta name="description" content="shooting stars">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <canvas id="app"></canvas>
+    <h1>&lt; Jhey Tompkins/&gt;</h1>
+    <p>
+      erer erg erg eg we wef wrg wecw w  erg wew cw
+      wefwge wcwefwg wfwc wef wgwefw cwfwegf w gwe
+      fwfw fwef wf wfwf wf
+      wf wfwfwe fw
+      fw efw
+      fwfwfwef
+      erer erg erg eg we wef wrg wecw w  erg wew cw
+      wefwge wcwefwg wfwc wef wgwefw cwfwegf w gwe
+      fwfw fwef wf wfwf wf
+      wf wfwfwe fw
+      fw efw
+      fwfwfwef
+      erer erg erg eg we wef wrg wecw w  erg wew cw
+      wefwge wcwefwg wfwc wef wgwefw cwfwegf w gwe
+      fwfw fwef wf wfwf wf
+      wf wfwfwe fw
+      fw efw
+      fwfwfwef
+      erer erg erg eg we wef wrg wecw w  erg wew cw
+      wefwge wcwefwg wfwc wef wgwefw cwfwegf w gwe
+      fwfw fwef wf wfwf wf
+      wf wfwfwe fw
+      fw efw
+      fwfwfwef
+      erer erg erg eg we wef wrg wecw w  erg wew cw
+      wefwge wcwefwg wfwc wef wgwefw cwfwegf w gwe
+      fwfw fwef wf wfwf wf
+      wf wfwfwe fw
+      fw efw
+      fwfwfwef
+    </p>
+  </header>
+  <script src="js/playground.js"></script>
+  <script>
+    var debounce = function(func, delay) {
+      var inDebounce;
+      inDebounce = undefined;
+      return function() {
+        var args, context;
+        context = this;
+        args = arguments;
+        clearTimeout(inDebounce);
+        return inDebounce = setTimeout((function() {
+          return func.apply(context, args);
+        }), delay);
+      };
+    };
+    
+    var config = {
+      id: 'app',
+      particleLife: 300,
+      amount: 50,
+      star: {
+        size: {
+          upper: 50,
+          lower: 25
+        },
+        rotateLimit: 90, 
+        points: 5,
+        innerRadius: 0.5,
+        borderColor: '#000',
+        fillColor: 'red',
+      }
+    };
+    
+    myCanvas = new ShootingStars(config);
+    myCanvas.flushPool();
+    myCanvas.render();
+    window.addEventListener('resize', debounce(function() {
+      myCanvas.canvas.width = window.innerWidth;
+      myCanvas.canvas.height = window.innerHeight;
+      myCanvas.flushPool();
+    }, 500));
+  </script>
+</body>
