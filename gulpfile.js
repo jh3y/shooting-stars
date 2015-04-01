@@ -7,6 +7,7 @@ var gulp = require('gulp'),
   less = require('gulp-less'),
   uglify = require('gulp-uglify'),
   rename = require('gulp-rename'),
+  deploy = require('gulp-gh-pages'),
   sources = {
     coffee: "src/coffee/**/*.coffee",
     jade: 'src/jade/**/*.jade',
@@ -79,6 +80,12 @@ gulp.task('jade:compile', function(event) {
     }))
     .pipe(gulp.dest(destinations.docs));
 });
+
+gulp.task('deploy', ['build'], function () {
+  return gulp.src("out/**/*.*")
+    .pipe(deploy());
+});
+
 /*JADE WATCH TASK FOR DEVELOPMENT*/
 gulp.task('jade:watch', function(event){
   gulp.watch(sources.jade, ['jade:compile']);

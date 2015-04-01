@@ -3,9 +3,11 @@
   "version": "0.0.1",
   "description": "an experiment with shooting stars particle system in canvas",
   "devDependencies": {
+    "gh-pages": "^0.2.0",
     "gulp": "^3.8.8",
     "gulp-coffee": "^2.2.0",
     "gulp-connect": "^2.0.6",
+    "gulp-gh-pages": "^0.5.0",
     "gulp-jade": "^0.9.0",
     "gulp-less": "^1.3.6",
     "gulp-plumber": "^0.6.6",
