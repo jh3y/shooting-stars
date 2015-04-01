@@ -1,4 +1,5 @@
 var gulp = require('gulp'),
+  gutil = require('gulp-util'),
   coffee = require('gulp-coffee'),
   jade = require('gulp-jade'),
   connect = require('gulp-connect'),
@@ -14,12 +15,18 @@ var gulp = require('gulp'),
     style: "src/less/style.less",
     overwatch: "./out/**/*.*"
   },
+  isDist = false,
   destinations = {
     js: "./out/js/",
     docs: "./out/",
     css: "./out/css/",
     dist: "./dist/"
   };
+
+if (gutil.env.dist) {
+  isDist = true;
+}
+
 /*SERVER TASK*/
 gulp.task('reload', function(event) {
   return gulp.src(sources.overwatch)
@@ -39,7 +46,12 @@ gulp.task('coffee:compile', function(event) {
   return gulp.src(sources.coffee)
     .pipe(plumber())
     .pipe(coffee())
-    .pipe(gulp.dest(destinations.js));
+    .pipe(gulp.dest(isDist ? destinations.dist: destinations.js))
+    .pipe(uglify())
+    .pipe(rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest(isDist ? destinations.dist: destinations.js));
 });
 /*COFFEE WATCH TASK FOR DEVELOPMENT*/
 gulp.task('coffee:watch', function(event) {
