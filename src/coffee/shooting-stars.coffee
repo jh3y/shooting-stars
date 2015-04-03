@@ -120,6 +120,7 @@ window.ShootingStars = ShootingStars = (config) ->
   defaults = {
     particleLife: 300,
     amount: 5,
+    resizePoll: 250,
     star: {
       size: {
         upper: 50,
@@ -140,12 +141,13 @@ window.ShootingStars = ShootingStars = (config) ->
   self.maxLife = self.options.particleLife # This means a particles is alive for 300 frames
   self.particles = []
   self.particlePool = []
+  self.poolSize = self.options.amount
   window.addEventListener 'resize', debounce((->
     self.canvas.width = window.innerWidth
     self.canvas.height = window.innerHeight
     self.flushPool()
     return
-  ), 500)
+  ), self.options.resizePoll)
   self
 
 
@@ -154,7 +156,10 @@ ShootingStars::flushPool = ->
   canvas = that.canvas
   particlePool = that.particlePool = []
   particles = that.particles = []
-  poolSize = that.options.amount
+  poolSize = self.poolSize = that.options.amount
+  if canvas.width < 450
+    console.log 'halving the pool', poolSize
+    poolSize = self.poolSize = poolSize / 2
   i = 0
   while i < poolSize
     getRandomFromRange = (max, min) ->
@@ -172,7 +177,7 @@ ShootingStars::render = ->
   particles = that.particles
   ctx.save()
   ctx.clearRect 0, 0, canvas.width, canvas.height
-  if Math.random() > 0.95 and particles.length < that.options.amount and particlePool.length > 0
+  if Math.random() > 0.95 and particles.length < that.poolSize and particlePool.length > 0
     particles.push particlePool.shift()
   p = 0
   while p < particles.length
