@@ -165,7 +165,6 @@
     particles = that.particles = [];
     poolSize = self.poolSize = that.options.amount;
     if (canvas.width < 450) {
-      console.log('halving the pool', poolSize);
       poolSize = self.poolSize = poolSize / 2;
     }
     i = 0;
