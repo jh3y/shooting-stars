@@ -127,6 +127,7 @@
     defaults = {
       particleLife: 300,
       amount: 5,
+      resizePoll: 250,
       star: {
         size: {
           upper: 50,
@@ -147,11 +148,12 @@
     self.maxLife = self.options.particleLife;
     self.particles = [];
     self.particlePool = [];
+    self.poolSize = self.options.amount;
     window.addEventListener('resize', debounce((function() {
       self.canvas.width = window.innerWidth;
       self.canvas.height = window.innerHeight;
       self.flushPool();
-    }), 500));
+    }), self.options.resizePoll));
     return self;
   };
 
@@ -161,7 +163,11 @@
     canvas = that.canvas;
     particlePool = that.particlePool = [];
     particles = that.particles = [];
-    poolSize = that.options.amount;
+    poolSize = self.poolSize = that.options.amount;
+    if (canvas.width < 450) {
+      console.log('halving the pool', poolSize);
+      poolSize = self.poolSize = poolSize / 2;
+    }
     i = 0;
     results = [];
     while (i < poolSize) {
@@ -185,7 +191,7 @@
     particles = that.particles;
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (Math.random() > 0.95 && particles.length < that.options.amount && particlePool.length > 0) {
+    if (Math.random() > 0.95 && particles.length < that.poolSize && particlePool.length > 0) {
       particles.push(particlePool.shift());
     }
     p = 0;
