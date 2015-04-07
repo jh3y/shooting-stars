@@ -4,7 +4,7 @@
  */
 
 (function() {
-  var ShootingStars, Star, debounce, extend;
+  var ShootingStars, Star, debounce, extend, requestAnimationFrame;
 
   Star = function(size, rotate, points, outerRadius, innerRadius, borderColor, fillColor, x, y, starCanvas) {
     var self;
@@ -120,6 +120,10 @@
     return a;
   };
 
+  requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+    return setTimeout(callback, 1000 / 60);
+  };
+
   window.ShootingStars = ShootingStars = function(config) {
     var canvas, canvasId, defaults, self;
     self = this;
@@ -158,7 +162,7 @@
   };
 
   ShootingStars.prototype.flushPool = function() {
-    var canvas, getRandomFromRange, i, particlePool, particles, poolSize, results, rotation, size, that;
+    var canvas, getRandomFromRange, i, particlePool, particles, poolSize, rotation, size, that, _results;
     that = this;
     canvas = that.canvas;
     particlePool = that.particlePool = [];
@@ -168,7 +172,7 @@
       poolSize = self.poolSize = poolSize / 2;
     }
     i = 0;
-    results = [];
+    _results = [];
     while (i < poolSize) {
       getRandomFromRange = function(max, min) {
         return Math.floor(Math.random() * (max - min + 1) + min);
@@ -176,9 +180,9 @@
       size = getRandomFromRange(that.options.star.size.upper, that.options.star.size.lower);
       rotation = getRandomFromRange(that.options.star.rotateLimit, 0);
       particlePool.push(new Star(size, rotation, 5, size / 2, (size / 2) * that.options.star.innerRadius, this.options.star.borderColor, this.options.star.fillColor, Math.floor((Math.random() * canvas.width) + 1), Math.floor((Math.random() * canvas.height) + 1), that));
-      results.push(i++);
+      _results.push(i++);
     }
-    return results;
+    return _results;
   };
 
   ShootingStars.prototype.render = function() {

@@ -1,6 +1,6 @@
 {
   "name": "shooting-stars",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "an experiment with shooting stars particle system in canvas",
   "devDependencies": {
     "gh-pages": "^0.2.0",
