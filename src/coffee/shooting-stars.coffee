@@ -110,7 +110,7 @@ extend = (a, b) ->
   a
 
 
-
+requestAnimationFrame = window.requestAnimationFrame or window.webkitRequestAnimationFrame or window.mozRequestAnimationFrame or window.msRequestAnimationFrame or (callback) -> setTimeout callback, 1000 / 60
 
 
 
