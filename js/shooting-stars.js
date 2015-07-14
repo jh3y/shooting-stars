@@ -4,7 +4,7 @@
  */
 
 (function() {
-  var ShootingStars, Star, debounce, extend;
+  var ShootingStars, Star, debounce, extend, requestAnimationFrame;
 
   Star = function(size, rotate, points, outerRadius, innerRadius, borderColor, fillColor, x, y, starCanvas) {
     var self;
@@ -120,12 +120,17 @@
     return a;
   };
 
+  requestAnimationFrame = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+    return setTimeout(callback, 1000 / 60);
+  };
+
   window.ShootingStars = ShootingStars = function(config) {
     var canvas, canvasId, defaults, self;
     self = this;
     canvasId = config.id;
     defaults = {
       particleLife: 300,
+      particleRenderProbability: 0.05,
       amount: 5,
       resizePoll: 250,
       star: {
@@ -148,6 +153,7 @@
     self.maxLife = self.options.particleLife;
     self.particles = [];
     self.particlePool = [];
+    self.particleProbability = self.options.particleRenderProbability;
     self.poolSize = self.options.amount;
     window.addEventListener('resize', debounce((function() {
       self.canvas.width = window.innerWidth;
@@ -190,7 +196,7 @@
     particles = that.particles;
     ctx.save();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    if (Math.random() > 0.95 && particles.length < that.poolSize && particlePool.length > 0) {
+    if (Math.random() > that.particleProbability && particles.length < that.poolSize && particlePool.length > 0) {
       particles.push(particlePool.shift());
     }
     p = 0;
