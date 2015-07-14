@@ -13,6 +13,7 @@ This isn't a released piece of code but if you're interested in playing with it 
   var config = {
     id: 'app',
     particleLife: 300,
+    particleRenderProbability: 0.5,
     amount: 50,
     resizePoll: 250,
     star: {
@@ -39,6 +40,7 @@ I'm just passing in a config to the function and the options included are as fol
 
 * `id: string` - the ID of the canvas element to be used.
 * `particleLife: int` - the lifespan of each star in frames.
+* `particleRenderProbability: int` - the probability of rendering a new particle in each frame if the amount limit hasn't been reached (must be from 0 - 1, eg. 0.95).
 * `amount: int` - the amount of stars to be rendered on the canvas.
 * `resizePoll: int` - the amount of ms for canvas to debounce resizing on viewport resize.
 * `star: obj` - defines characteristics of stars that are rendered.
